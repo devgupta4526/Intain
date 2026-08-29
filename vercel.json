@@ -3,7 +3,7 @@
   "buildCommand": "npm run build:vercel",
   "functions": {
     "server.ts": {
-      "includeFiles": ["data/**", "public/**"],
+      "includeFiles": "{data,public}/**",
       "maxDuration": 30
     }
   }

@@ -9,3 +9,5 @@ uploads/
 .DS_Store
 coverage/
 artifacts-*.png
+
+.env.local
