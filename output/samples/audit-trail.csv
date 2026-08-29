@@ -1,0 +1,6 @@
+id,loan_id,event_type,description,previous_hash,event_hash,created_at,actor
+26,LN-10006,AI_RECOMMENDATION_GENERATED,AI recommendation generated and held for human review.,3d6a4fcd2029eaec495b7b57b98ac9ee8a52a022213617d4dfa1a20ef4e0ccc8,c2620ca91d3580da7cf7df62925dd13850ff4f5026f3e3b057b0f0d25a073a32,2026-08-29T11:22:20.452Z,Arjun Mehta
+27,LN-10006,AI_RECOMMENDATION_ACCEPTED,Reviewer accepted AI recommendation 1.,c2620ca91d3580da7cf7df62925dd13850ff4f5026f3e3b057b0f0d25a073a32,60fa2a61fd52316890f6c88e1a45c2abb539f03e88e4045f05be5d05f16cbb23,2026-08-29T11:22:39.840Z,Arjun Mehta
+28,LN-10006,FIELD_EDITED,4 fields updated by reviewer.,60fa2a61fd52316890f6c88e1a45c2abb539f03e88e4045f05be5d05f16cbb23,1b3c202a4375e8bcee0082955c7d5a091b27bfdff070de829f9a63a17abbcb7b,2026-08-29T11:25:07.339Z,Arjun Mehta
+29,LN-10006,LOAN_APPROVED,Loan approved by reviewer.,1b3c202a4375e8bcee0082955c7d5a091b27bfdff070de829f9a63a17abbcb7b,aa60020b6aeadfd62e6f4b8a83b43c8816eb750a97ffb4eb847e79f45438fe64,2026-08-29T11:25:52.247Z,Arjun Mehta
+30,LN-10006,VERIFIED_RECORD_CREATED,Canonical record sealed with a SHA-256 lineage hash.,aa60020b6aeadfd62e6f4b8a83b43c8816eb750a97ffb4eb847e79f45438fe64,1d6e8a4ad8d804546908bb62804de717f2720ca1ccf3c15d5da50ed8051746ec,2026-08-29T11:25:52.257Z,Arjun Mehta

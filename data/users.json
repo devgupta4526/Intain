@@ -1,0 +1,6 @@
+[
+  { "name": "Maya Chen", "email": "operator@veritas.demo", "role": "operator" },
+  { "name": "Arjun Mehta", "email": "reviewer@veritas.demo", "role": "reviewer" },
+  { "name": "Sofia Reyes", "email": "consumer@veritas.demo", "role": "consumer" }
+]
+

@@ -1,0 +1,6 @@
+loan_id,document_status,document_type,received_at
+LN-10001,complete,loan_package,2023-01-14
+LN-10002,complete,loan_package,2024-03-09
+LN-10005,missing,income_verification,
+LN-10006,complete,loan_package,2025-01-08
+

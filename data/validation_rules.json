@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "stale_after_days": 180,
+  "interest_rate": { "min": 0, "max": 0.35 },
+  "required_fields": ["loan_id", "borrower_id", "origination_date", "maturity_date", "original_principal", "current_balance", "payment_status", "document_status"],
+  "valid_payment_statuses": ["current", "late", "delinquent", "default", "closed"],
+  "controls": ["maturity_after_origination", "non_negative_balances", "balance_not_above_principal", "status_matches_days_past_due", "closed_has_zero_balance", "unique_loan_id", "required_documents"]
+}
+

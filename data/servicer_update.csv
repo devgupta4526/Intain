@@ -1,0 +1,5 @@
+loan_id,current_balance,payment_status,days_past_due,last_updated_at,source_system
+LN-10002,27200,current,0,2026-08-22T09:15:00Z,NorthstarServicingAPI
+LN-10005,144100,late,41,2026-08-21T14:00:00Z,SummitServicingAPI
+LN-10006,18750,late,14,2026-08-20T12:30:00Z,HarborServicingAPI
+
