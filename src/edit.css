@@ -47,3 +47,7 @@ th {
 .global-search kbd {
   color: #566461;
 }
+
+.empty-state p {
+  color: #5d6c68;
+}
