@@ -30,6 +30,10 @@ npm start
 
 Open [http://localhost:4000](http://localhost:4000).
 
+### Hosted test deployment
+
+The repository includes a Vercel Express adapter and production asset build. For a zero-configuration test deployment, SQLite is created in the function's writable `/tmp` storage. This supports the complete interactive demo within a warm function instance, but Vercel may reset it after a cold start. Use managed PostgreSQL for durable production hosting.
+
 ## Demo identities
 
 No passwords are needed in the local hackathon build. The header role switcher simulates these supplied test accounts:
@@ -83,4 +87,3 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for design details and trade-of
 ## Verification and limitations
 
 `npm test` covers validation contradictions, AI separation, human-gated verification, hashes, audit-chain integrity, exports, and required APIs. The project intentionally uses role simulation rather than production authentication, a deterministic AI fallback rather than unreviewed free-form generation, and local SQLite rather than a multi-region datastore. These match the challenge’s demo scope and are documented migration seams, not hidden assumptions.
-

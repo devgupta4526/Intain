@@ -5,7 +5,9 @@ import { fileURLToPath } from 'node:url';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const defaultPath = path.resolve(here, '../data/veritas.db');
-const databasePath = process.env.DATABASE_PATH
+const databasePath = process.env.VERCEL
+  ? path.join(process.env.TMPDIR || process.env.TEMP || '/tmp', 'veritas.db')
+  : process.env.DATABASE_PATH
   ? path.resolve(process.cwd(), process.env.DATABASE_PATH)
   : defaultPath;
 
@@ -142,4 +144,3 @@ export function migrate() {
   insert.run('Arjun Mehta', 'reviewer@veritas.demo', 'reviewer', 'AM');
   insert.run('Sofia Reyes', 'consumer@veritas.demo', 'consumer', 'SR');
 }
-

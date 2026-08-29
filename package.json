@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "concurrently -k -n api,web -c cyan,magenta \"tsx watch server/index.ts\" \"vite\"",
     "build": "tsc --noEmit && tsc -p server/tsconfig.json && vite build",
+    "build:vercel": "tsc --noEmit && vite build --outDir public",
     "start": "cross-env NODE_ENV=production tsx server/index.ts",
     "seed": "tsx server/seed.ts",
     "test": "vitest run",

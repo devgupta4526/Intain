@@ -209,7 +209,7 @@ export function createApp(options: { seed?: boolean } = {}) {
   });
 
   if (process.env.NODE_ENV === 'production') {
-    const clientPath = path.resolve(here, '../dist/client');
+    const clientPath = process.env.VERCEL ? path.resolve(here, '../public') : path.resolve(here, '../dist/client');
     app.use(express.static(clientPath));
     app.get(/^(?!\/api).*/, (_req, res) => res.sendFile(path.join(clientPath, 'index.html')));
   }
@@ -220,4 +220,3 @@ export function createApp(options: { seed?: boolean } = {}) {
   });
   return app;
 }
-
