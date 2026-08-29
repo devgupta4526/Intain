@@ -1,0 +1,20 @@
+.record-grid dt em {
+  color: var(--teal);
+  font-style: normal;
+  margin-left: 4px;
+}
+
+.record-grid input {
+  width: 100%;
+  border: 1px solid #afcec5;
+  border-radius: 5px;
+  padding: 6px;
+  color: var(--ink);
+  background: #f7fbfa;
+  font-size: 10px;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 5px;
+}

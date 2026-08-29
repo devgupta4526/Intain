@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-
-function App() {
-  return <main><h1>Veritas Loan Copilot</h1><p>Trusted loan data, from intake to evidence.</p></main>;
-}
+import { BrowserRouter } from 'react-router-dom';
+import { App } from './App';
+import './styles.css';
+import './edit.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode><App /></React.StrictMode>,
+  <React.StrictMode><BrowserRouter><App /></BrowserRouter></React.StrictMode>,
 );
-
