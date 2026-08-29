@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently -k -n api,web -c cyan,magenta \"tsx watch server/index.ts\" \"vite\"",
     "build": "tsc --noEmit && tsc -p server/tsconfig.json && vite build",
-    "start": "NODE_ENV=production tsx server/index.ts",
+    "start": "cross-env NODE_ENV=production tsx server/index.ts",
     "seed": "tsx server/seed.ts",
     "test": "vitest run",
     "test:watch": "vitest"
@@ -36,6 +36,7 @@
     "@types/supertest": "^6.0.3",
     "@vitejs/plugin-react": "^5.0.2",
     "concurrently": "^9.2.1",
+    "cross-env": "^10.1.0",
     "jsdom": "^26.1.0",
     "supertest": "^7.1.4",
     "tsx": "^4.20.5",

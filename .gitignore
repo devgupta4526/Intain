@@ -6,4 +6,4 @@ uploads/
 .env
 .DS_Store
 coverage/
-
+artifacts-*.png

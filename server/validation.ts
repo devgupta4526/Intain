@@ -66,12 +66,16 @@ export function runValidation(loanRowId: number) {
     if (repeat) issues.push(issue('SUSPICIOUS_REPEAT', 'high', `Borrower, amount, and origination date match row ${repeat.id}.`, 'borrower_id', loan.borrower_id));
   }
 
-  const insert = db.prepare(`INSERT OR REPLACE INTO exceptions
+  const insert = db.prepare(`INSERT INTO exceptions
     (loan_row_id,rule_code,field_name,severity,message,current_value,suggested_value,status,created_at)
-    VALUES (?,?,?,?,?,?,?,'open',?)`);
+    VALUES (?,?,?,?,?,?,?,'open',?)
+    ON CONFLICT(loan_row_id,rule_code) DO UPDATE SET
+      field_name=excluded.field_name,severity=excluded.severity,message=excluded.message,
+      current_value=excluded.current_value,suggested_value=excluded.suggested_value,
+      status='open',resolved_at=NULL`);
   const now = new Date().toISOString();
   const transaction = db.transaction(() => {
-    db.prepare("DELETE FROM exceptions WHERE loan_row_id = ? AND status = 'open'").run(loanRowId);
+    db.prepare("UPDATE exceptions SET status='corrected',resolved_at=? WHERE loan_row_id=? AND status='open'").run(now, loanRowId);
     for (const value of issues) insert.run(loanRowId, value.ruleCode, value.fieldName ?? null, value.severity,
       value.message, value.currentValue == null ? null : String(value.currentValue), value.suggestedValue == null ? null : String(value.suggestedValue), now);
     db.prepare('UPDATE loans SET validation_status = ? WHERE id = ?').run(issues.length ? 'invalid' : 'valid', loanRowId);
@@ -79,4 +83,3 @@ export function runValidation(loanRowId: number) {
   transaction();
   return issues;
 }
-
