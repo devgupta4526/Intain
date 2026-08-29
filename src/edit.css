@@ -39,3 +39,11 @@ th {
 .table-sub {
   color: #5d6c68;
 }
+
+.nav-label {
+  color: #91afa8;
+}
+
+.global-search kbd {
+  color: #566461;
+}
