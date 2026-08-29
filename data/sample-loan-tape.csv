@@ -1,0 +1,14 @@
+loan_id,borrower_id,loan_type,origination_date,maturity_date,original_principal,current_balance,interest_rate,term_months,borrower_state,loan_purpose,credit_grade,employment_length,income_band,payment_status,days_past_due,servicer_name,last_payment_date,last_updated_at,document_status,source_system
+LN-10001,BR-201,mortgage,2023-01-15,2053-01-15,420000,397500,6.25%,360,CA,purchase,A,8 years,100k-150k,current,0,Northstar Servicing,2026-08-01,2026-08-18T10:30:00Z,complete,OriginationPro
+LN-10002,BR-202,personal,2024-03-10,2027-03-10,28000,31200,9.4%,36,TX,debt_consolidation,B,4 years,50k-75k,current,0,Northstar Servicing,2026-07-10,2026-08-17T09:00:00Z,complete,OriginationPro
+LN-10003,BR-203,auto,2025-06-01,2030-06-01,48000,40500,7.1%,60,ZZ,vehicle,B,6 years,75k-100k,current,0,Harbor Loan Care,2026-08-01,2026-08-15T14:20:00Z,complete,DealerFlow
+LN-10004,BR-204,mortgage,2020-02-20,2050-02-20,650000,0,5.9%,360,NY,purchase,A,12 years,150k+,closed,0,Northstar Servicing,2026-05-20,2026-08-20T08:00:00Z,complete,OriginationPro
+LN-10005,BR-205,small_business,2022-11-05,2027-11-05,180000,145000,12.5%,60,FL,working_capital,C,10 years,100k-150k,late,32,Summit Financial,2026-06-30,2026-08-13T12:00:00Z,missing,BizLend
+LN-10006,BR-206,personal,2025-01-09,2028-01-09,22000,18750,8.75%,36,WA,home_improvement,B,3 years,50k-75k,current,14,Harbor Loan Care,2026-07-22,2026-08-12T15:45:00Z,complete,OriginationPro
+LN-10007,BR-207,mortgage,2023-05-22,2053-05-22,510000,488000,6.4%,360,IL,refinance,A,9 years,150k+,current,0,Northstar Servicing,2026-08-02,2025-10-01T10:00:00Z,complete,OriginationPro
+LN-10008,BR-208,auto,2024-09-14,2024-08-14,36000,28100,7.8%,60,GA,vehicle,B,2 years,50k-75k,current,0,Harbor Loan Care,2026-07-29,2026-08-11T11:30:00Z,complete,DealerFlow
+LN-10009,BR-209,personal,2023-04-18,2026-04-18,15000,3200,48%,36,MA,medical,C,5 years,25k-50k,late,61,Summit Financial,2026-06-01,2026-08-09T07:15:00Z,complete,OriginationPro
+LN-10010,BR-210,small_business,2021-07-30,2026-07-30,250000,18900,10.2%,60,CO,equipment,B,11 years,150k+,closed,0,Summit Financial,2026-07-30,2026-08-19T16:00:00Z,complete,BizLend
+LN-10002,BR-211,personal,2024-12-02,2027-12-02,30000,25100,9.1%,36,AZ,debt_consolidation,B,7 years,75k-100k,current,0,Northstar Servicing,2026-08-01,2026-08-18T09:40:00Z,complete,OriginationPro
+,BR-212,auto,2025-02-11,2030-02-11,-44000,39000,7.3%,60,NJ,vehicle,C,1 year,25k-50k,current,0,Harbor Loan Care,2026-08-01,2026-08-16T13:10:00Z,complete,DealerFlow
+

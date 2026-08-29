@@ -1,5 +1,4 @@
-import { migrate } from './db.js';
+import { createApp } from './app.js';
 
-migrate();
-console.log('Database schema ready.');
-
+createApp();
+console.log('Database schema and demo loan tape ready.');
