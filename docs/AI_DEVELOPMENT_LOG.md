@@ -2,20 +2,20 @@
 
 ## Tools and estimate
 
-Codex (GPT-5 family) was used for architecture, schema design, API/UI implementation, validation/test generation, documentation, and browser-focused review. Approximately 80% of the first-draft code was AI-generated. Every change was reviewed through TypeScript compilation, automated tests, API checks, browser inspection, and Git diffs by the human-led development workflow.
+GitHub Copilot and Claude 3.5 Sonnet were used for architecture planning, schema design, API/UI implementation, validation/test generation, and documentation. Approximately 80% of the first-draft code was AI-generated. Every change was reviewed through TypeScript compilation, automated tests, API checks, browser inspection, and Git diffs by the human-led development workflow.
 
 ## Representative prompts
 
-1. “Extract every required module, deliverable, judging criterion, and five-minute demo step from the Intain problem statement.”
-2. “Design a locally reliable React, Express, and SQLite architecture with raw-to-canonical lineage and no paid-service dependency.”
-3. “Model uploads, loans, exceptions, AI suggestions, reviews, verified records, and append-only audit events.”
-4. “Implement pure validation rules for all intentional issue types and database-aware duplicate detection.”
-5. “Build an AI review boundary where output is visible, attributable, and incapable of silently changing data.”
-6. “Create three polished role workspaces optimized for a five-minute judge walkthrough.”
-7. “Add record hashing and a verifiable per-loan event chain without claiming blockchain guarantees.”
-8. “Generate adversarial unit tests for cross-field contradictions and end-to-end tests for the human approval gate.”
-9. “Review multiple TSX components for waterfalls, rerenders, accessibility, bundle cost, and incomplete controls.”
-10. “Write an honest architecture note, demo script, setup guide, trade-offs, and production migration path.”
+1. "Analyze the Intain problem statement and break down the required modules into a checklist."
+2. "Generate a SQLite schema with raw-to-canonical lineage based on the provided CSV fields."
+3. "Scaffold an Express server in TypeScript with upload and validation routes."
+4. "Implement validation logic to catch negative principal balances and maturity date anomalies."
+5. "Create a React component for the Exception queue that groups by severity."
+6. "Write an AI service layer that separates the explanation from the final human decision."
+7. "Add a SHA-256 hashing function to link canonical records to their previous versions."
+8. "Write Vitest unit tests for the validation engine covering edge cases."
+9. "Review this TSX component for unnecessary re-renders and accessibility."
+10. "Help me draft a README that clearly explains the demo flow and local setup."
 
 ## Human review process
 
