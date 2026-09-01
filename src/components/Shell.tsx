@@ -30,7 +30,7 @@ export function Shell({ role, onRoleChange, children }: { role: Role; onRoleChan
         </NavLink>)}
       </nav>
       <div className="trust-card"><Activity size={18}/><div><strong>Evidence chain active</strong><span>SHA-256 audit sealing</span></div><span className="pulse" /></div>
-      <div className="sidebar-bottom"><button className="nav-item ghost"><CircleHelp size={18}/> Demo guide</button><button className="nav-item ghost"><LogOut size={18}/> Sign out</button></div>
+      <div className="sidebar-bottom"><button className="nav-item ghost" onClick={() => window.alert('Please refer to the DEMO_SCRIPT.md and README.md in the repository for the demo guide.')}><CircleHelp size={18}/> Demo guide</button><button className="nav-item ghost" onClick={() => window.alert('Sign out is disabled in this demo environment. Please use the Role Switcher at the top right to change users.')}><LogOut size={18}/> Sign out</button></div>
     </aside>
     <div className="main-column">
       <header className="topbar">
