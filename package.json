@@ -16,6 +16,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "csv-parse": "^6.1.0",
     "csv-stringify": "^6.6.0",
     "express": "^5.1.0",

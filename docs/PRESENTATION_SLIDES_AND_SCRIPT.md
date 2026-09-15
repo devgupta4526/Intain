@@ -109,11 +109,11 @@ SYSTEM ARCHITECTURE
 ───────────────────────────────────
 Frontend        React 19 + Vite 7 + TypeScript
 Backend         Express 5 (Node.js 22)
-Database        SQLite with Better-SQLite3
+Database        PostgreSQL (Neon) with postgres.js
 AI Layer        Deterministic rule engine / OpenAI-compatible
 Hashing         Node.js crypto — SHA-256
 Testing         Vitest + Supertest (unit + API tests)
-Deployment      Vercel-ready + Docker
+Deployment      Vercel Edge/Serverless + Docker-ready
 
 Key Design Principles:
   ✅  Single process — minimal demo failure modes
@@ -126,7 +126,7 @@ Key Design Principles:
 ### 🎙️ Presenter Script
 "The architecture is a **TypeScript monorepo** — one process serves the Express REST API and the Vite-built React frontend. This keeps the demo reliable and eliminates complex orchestration.
 
-The database is SQLite — zero configuration, fully transactional. I made this a conscious trade-off: for the challenge's scale of 1,000–5,000 rows, SQLite is perfect. For production, the migration path to PostgreSQL is a clearly documented seam in the codebase.
+The database is PostgreSQL hosted on Neon — a serverless Postgres platform. We migrated from an initial SQLite prototype to a fully-featured Postgres deployment to ensure production-grade transactional integrity and scaling capabilities out of the box on Vercel.
 
 The most important architectural decision was the **AI boundary**. The AI service module in `server/ai.ts` is completely isolated — it generates evidence and recommendations, but it is **physically separated** from the loan record update path. An AI suggestion cannot silently mutate a loan field. That's by design, not by accident.
 
@@ -416,7 +416,7 @@ FROM DEMO TO PRODUCTION
 ───────────────────────────────────
 Current (Demo)          →  Production Migration
 ──────────────────────────────────────────────
-SQLite                  →  PostgreSQL (documented seam)
+Neon Serverless DB      →  Dedicated Enterprise Postgres Cluster
 Role header switch      →  OIDC + server-side auth middleware
 Sync CSV parsing        →  Object storage + streaming + queue worker
 Local hash chain        →  Merkle root anchoring in timestamp authority
@@ -427,7 +427,7 @@ Single server process   →  Multi-region, tenant-scoped deployment
 ```
 
 ### 🎙️ Presenter Script
-"Every demo trade-off in Veritas is a documented migration seam, not a hidden assumption. SQLite becomes PostgreSQL. The role switch gets replaced by OIDC. Synchronous parsing becomes async queue workers for large portfolios. The local hash chain gets anchored to an external timestamp authority.
+"Every demo trade-off in Veritas is a documented migration seam, not a hidden assumption. Our serverless Postgres becomes a dedicated enterprise cluster. The role switch gets replaced by OIDC. Synchronous parsing becomes async queue workers for large portfolios. The local hash chain gets anchored to an external timestamp authority.
 
 I'm not pretending this is production-ready in its current form — but I am claiming that the architecture makes the production path clear and honest."
 
@@ -477,9 +477,9 @@ QUESTIONS & ANSWERS
 
 ---
 
-**Q: Why SQLite and not PostgreSQL from the start?**
+**Q: Why PostgreSQL on Neon instead of a local database?**
 
-> "SQLite gives zero-configuration, transactional, locally reproducible behavior — it eliminates an entire class of demo failure modes. The challenge explicitly calls for a prototype, not a production system. The migration to PostgreSQL is a named, documented path in the architecture notes — it's not an oversight, it's a deliberate scoping decision."
+> "We initially prototyped with SQLite for simplicity, but migrated to PostgreSQL on Neon to prove that the architecture could handle production-grade relational constraints. Neon's serverless nature allowed us to deploy seamlessly to Vercel without worrying about connection limits, eliminating a major deployment failure mode while providing true Postgres."
 
 ---
 
@@ -515,7 +515,7 @@ QUESTIONS & ANSWERS
 
 **Q: How would you scale this to millions of loans?**
 
-> "Three changes: First, replace synchronous CSV parsing with object storage intake (S3/GCS), streaming parsing via `csv-parse` streams, and a queue worker (BullMQ or similar) for per-row processing. Second, replace SQLite with PostgreSQL with connection pooling and indexed queries on loan_id, batch_id, and severity. Third, for the audit chain at scale, compute periodic Merkle tree roots over batches of events and anchor them in an external timestamp authority. These are named migration seams in the architecture doc."
+> "Three changes: First, replace synchronous CSV parsing with object storage intake (S3/GCS), streaming parsing via `csv-parse` streams, and a queue worker (BullMQ or similar) for per-row processing. Second, scale our serverless PostgreSQL to a dedicated cluster with advanced connection pooling and read replicas. Third, for the audit chain at scale, compute periodic Merkle tree roots over batches of events and anchor them in an external timestamp authority. These are named migration seams in the architecture doc."
 
 ---
 
@@ -532,7 +532,7 @@ QUESTIONS & ANSWERS
 | DB Tables | 7 (batches, loans, exceptions, ai_recommendations, reviews, verified_loans, audit_events) |
 | Editable Fields (Reviewer) | 4 (current_balance, payment_status, borrower_state, document_status) |
 | Test Framework | Vitest + Supertest |
-| Tech Stack | React 19 + Vite 7 + Express 5 + SQLite + TypeScript strict |
+| Tech Stack | React 19 + Vite 7 + Express 5 + PostgreSQL + TypeScript strict |
 
 ### Key Phrases to Nail
 - *"AI that explains — never decides."*
@@ -545,7 +545,7 @@ QUESTIONS & ANSWERS
 - ❌ Don't say "blockchain" — say "hash-linked audit chain" or "evidence chain"
 - ❌ Don't say "AI makes decisions" — always say "AI advises, humans decide"
 - ❌ Don't say "production-ready" — say "demo-scoped with documented production path"
-- ❌ Don't apologize for SQLite — frame it as the right tool for the challenge scope
+- ❌ Don't overclaim the AI capabilities — emphasize that it is sandboxed and gated
 
 ---
 
