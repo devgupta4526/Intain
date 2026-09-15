@@ -35,6 +35,11 @@ export function Login({ onLogin }: { onLogin: (user: User) => void }) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [signingIn, setSigningIn] = useState<number | null>(null);
+  
+  // Traditional form state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     api<User[]>('/users')
@@ -45,10 +50,29 @@ export function Login({ onLogin }: { onLogin: (user: User) => void }) {
 
   async function handleSignIn(user: User) {
     setSigningIn(user.id);
-    // Small delay for tactile feedback
     await new Promise((r) => setTimeout(r, 380));
     saveSession(user);
     onLogin(user);
+  }
+
+  async function handleFormSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    
+    // Find user by email
+    const user = users.find(u => u.email === email);
+    if (!user) {
+      setError('Invalid email or password');
+      return;
+    }
+    
+    // Demo password check (accepting anything for the demo, or hardcoded 'demo123')
+    if (password.length < 3) {
+      setError('Invalid email or password');
+      return;
+    }
+    
+    await handleSignIn(user);
   }
 
   return (
@@ -89,9 +113,45 @@ export function Login({ onLogin }: { onLogin: (user: User) => void }) {
       {/* Right panel — sign-in cards */}
       <div className="login-right">
         <div className="login-card-wrapper">
-          <div className="login-card-header">
-            <h2>Choose your workspace</h2>
-            <p>Three roles, one click. Each persona has a dedicated view.</p>
+          
+          <div className="login-form-container">
+            <div className="login-card-header">
+              <h2>Sign in to Veritas</h2>
+              <p>Enter your credentials to access your workspace.</p>
+            </div>
+            
+            <form onSubmit={handleFormSubmit} className="traditional-login-form">
+              <div className="form-group">
+                <label htmlFor="email">Email address</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  placeholder="operator@veritas.demo"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="password">Password</label>
+                <input 
+                  type="password" 
+                  id="password" 
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              {error && <div className="form-error-banner">{error}</div>}
+              <button type="submit" className="button primary full-width" disabled={signingIn !== null}>
+                Sign in securely
+              </button>
+            </form>
+          </div>
+
+          <div className="login-divider">
+            <span>or use quick demo login</span>
           </div>
 
           {loading ? (

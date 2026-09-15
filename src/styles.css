@@ -69,3 +69,16 @@
 .dropdown-item.sign-out:hover{background:#fce9ea}
 @media(max-width:760px){.login-left{display:none}.login-right{padding:24px 16px}.user-pill-info{display:none}}
 @media(max-width:480px){.login-right{padding:16px 10px}}
+
+/* -- TRADITIONAL LOGIN FORM ----------------------------------- */
+.login-form-container{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:24px;box-shadow:0 4px 12px rgba(20,35,33,.04)}
+.traditional-login-form{display:flex;flex-direction:column;gap:16px;margin-top:20px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:11px;font-weight:700;color:var(--ink)}
+.form-group input{width:100%;height:40px;border:1px solid #dbe4e2;border-radius:8px;padding:0 12px;font-size:12px;background:#fafcfb;outline:0;transition:.15s;color:var(--ink)}
+.form-group input:focus{border-color:var(--teal);background:white;box-shadow:0 0 0 3px rgba(11,107,93,.1)}
+.full-width{width:100%;height:42px;font-size:13px}
+.form-error-banner{background:#fce9ea;color:#b3323a;border:1px solid #f2c7cb;border-radius:8px;padding:10px 12px;font-size:11px;font-weight:600}
+.login-divider{display:flex;align-items:center;text-align:center;color:#8a9693;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:24px}
+.login-divider::before,.login-divider::after{content:'';flex:1;border-bottom:1px solid #e0e7e5}
+.login-divider span{padding:0 14px}
