@@ -69,17 +69,21 @@ export async function ingestCsv(buffer: Buffer, filename: string, actorId = 1) {
   for (const [index, raw] of rows.entries()) {
     try {
       const loan = normalize(raw, batchId, index + 2);
-      const vals = columns.map((c) => loan[c as keyof LoanRecord] ?? null);
+      const insertObj: any = { created_at: now };
+      for (const c of columns) insertObj[c] = loan[c as keyof LoanRecord] ?? null;
+      
       const [inserted] = await sql`
-        INSERT INTO loans (${sql(columns as unknown as string[])}, created_at)
-        VALUES (${sql(vals)}, ${now})
+        INSERT INTO loans ${sql(insertObj)}
         RETURNING id
       `;
       const loanRowId = Number(inserted.id);
       loanIds.push(loanRowId);
       imported++;
       await audit({ loanRowId, batchId, actorId, eventType: 'LOAN_IMPORTED', description: `Source row ${index + 2} normalized into the canonical schema.`, metadata: { sourceRow: index + 2, loanId: loan.loan_id } });
-    } catch { failed++; }
+    } catch (err) {
+      console.error('Insert error on row', index, err);
+      failed++;
+    }
   }
 
   for (const loanRowId of loanIds) {

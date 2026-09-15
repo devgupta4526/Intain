@@ -1,4 +1,5 @@
+try { process.loadEnvFile(); } catch {}
 import { createApp } from './app.js';
 
-createApp();
+await createApp();
 console.log('Database schema and demo loan tape ready.');
