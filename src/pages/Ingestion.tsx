@@ -4,14 +4,14 @@ import { api, compactHash, dateTime } from '../api';
 
 type Batch = { id: number; filename: string; source_hash: string; uploaded_at: string; total_rows: number; imported_rows: number; failed_rows: number; status: string; exception_count: number; uploaded_by_name: string };
 
-export function Ingestion() {
+export function Ingestion({ userId }: { userId: number }) {
   const [batches, setBatches] = useState<Batch[]>([]); const [drag, setDrag] = useState(false); const [busy, setBusy] = useState(false); const [result, setResult] = useState<Record<string, unknown> | null>(null); const [error, setError] = useState('');
   const input = useRef<HTMLInputElement>(null);
   const refresh = () => api<Batch[]>('/batches').then(setBatches);
   useEffect(() => { refresh(); }, []);
   async function uploadFile(file?: File) {
     if (!file) return; setBusy(true); setError(''); setResult(null);
-    const data = new FormData(); data.append('file', file); data.append('actorId', '1');
+    const data = new FormData(); data.append('file', file); data.append('actorId', String(userId));
     try { const uploaded = await api<Record<string, unknown>>('/upload', { method: 'POST', body: data }); setResult(uploaded); await refresh(); }
     catch (value) { setError(value instanceof Error ? value.message : 'Upload failed.'); } finally { setBusy(false); }
   }

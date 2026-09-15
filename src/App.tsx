@@ -34,10 +34,10 @@ export function App() {
     <Shell user={user} onSignOut={handleSignOut}>
       <Routes>
         <Route path="/" element={<Dashboard role={role} />} />
-        <Route path="/ingestion" element={role === 'operator' ? <Ingestion /> : <Navigate to="/" replace />} />
+        <Route path="/ingestion" element={role === 'operator' ? <Ingestion userId={user.id} /> : <Navigate to="/" replace />} />
         <Route path="/exceptions" element={role !== 'consumer' ? <Exceptions /> : <Navigate to="/" replace />} />
         <Route path="/loans" element={<Loans />} />
-        <Route path="/loans/:id" element={<LoanDetail role={role} />} />
+        <Route path="/loans/:id" element={<LoanDetail role={role} userId={user.id} />} />
         <Route path="/verified" element={role !== 'operator' ? <VerifiedRecords /> : <Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
