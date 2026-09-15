@@ -87,3 +87,8 @@
 .auth-toggle button:hover{text-decoration:underline}
 .form-select{width:100%;height:40px;border:1px solid #dbe4e2;border-radius:8px;padding:0 12px;font-size:12px;background:#fafcfb;outline:0;color:var(--ink);appearance:none;cursor:pointer}
 .form-select:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(11,107,93,.1)}
+.correction-banner{display:flex;align-items:flex-start;gap:13px;background:#fff8e9;border:1px solid #eed9ab;border-radius:10px;padding:14px 17px;color:#8a5812}
+.correction-banner>svg{flex:none;margin-top:2px;color:#c97c10}
+.correction-banner strong{display:block;font-size:12px;font-weight:700;margin-bottom:3px}
+.correction-banner p{font-size:10px;color:#7a5210;margin:0;line-height:1.5}
+.correction-meta{margin-left:auto;font-size:9px;color:#9a7030;white-space:nowrap;padding-left:12px}

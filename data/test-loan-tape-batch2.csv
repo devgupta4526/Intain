@@ -1,0 +1,11 @@
+loan_id,borrower_id,loan_type,origination_date,maturity_date,original_principal,current_balance,interest_rate,term_months,borrower_state,loan_purpose,credit_grade,employment_length,income_band,payment_status,days_past_due,servicer_name,last_payment_date,last_updated_at,document_status,source_system
+LN-20001,BR-301,mortgage,2022-03-15,2052-03-15,575000,541200,5.85%,360,CA,purchase,A,10 years,150k+,current,0,Northstar Servicing,2026-08-05,2026-09-01T09:00:00Z,complete,OriginationPro
+LN-20002,BR-302,personal,2025-01-20,2028-01-20,35000,36800,10.2%,36,NY,debt_consolidation,B,3 years,50k-75k,current,0,Summit Financial,2026-08-12,2026-09-02T10:30:00Z,complete,LoanBook
+LN-20003,BR-303,auto,2024-07-01,2029-07-01,52000,44100,6.9%,60,TX,vehicle,B,5 years,75k-100k,current,0,Harbor Loan Care,2026-08-08,2026-09-01T11:00:00Z,complete,DealerFlow
+LN-20004,BR-304,mortgage,2019-05-10,2049-05-10,890000,0,4.75%,360,WA,purchase,A,15 years,150k+,closed,0,Northstar Servicing,2026-04-10,2026-08-30T08:00:00Z,complete,OriginationPro
+LN-20005,BR-305,small_business,2023-08-22,2028-08-22,220000,198000,13.1%,60,FL,working_capital,C,7 years,100k-150k,late,45,Summit Financial,2026-07-01,2026-08-28T14:00:00Z,missing,BizLend
+LN-20006,BR-306,personal,2024-11-05,2027-11-05,18000,14300,8.5%,36,OH,home_improvement,B,2 years,25k-50k,current,18,Harbor Loan Care,2026-08-01,2026-08-27T16:00:00Z,complete,LoanBook
+LN-20007,BR-307,auto,2025-04-14,2025-03-14,41000,35600,7.5%,60,GA,vehicle,C,1 year,25k-50k,current,0,Harbor Loan Care,2026-08-10,2026-09-01T09:45:00Z,complete,DealerFlow
+LN-20008,BR-308,mortgage,2023-09-01,2053-09-01,480000,461000,6.1%,360,IL,refinance,A,8 years,100k-150k,late,5,Northstar Servicing,2026-08-08,2026-09-02T07:30:00Z,complete,OriginationPro
+LN-20009,BR-309,personal,2024-02-28,2027-02-28,22000,3800,52%,36,CO,medical,D,4 years,25k-50k,late,88,Summit Financial,2026-06-15,2026-08-25T12:00:00Z,complete,LoanBook
+LN-20001,BR-310,auto,2025-06-18,2030-06-18,29000,27100,7.2%,60,AZ,vehicle,B,6 years,50k-75k,current,0,Harbor Loan Care,2026-08-09,2026-09-01T08:00:00Z,complete,DealerFlow
