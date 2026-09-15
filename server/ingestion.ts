@@ -1,5 +1,5 @@
 import { parse } from 'csv-parse/sync';
-import { db } from './db.js';
+import { sql } from './db.js';
 import { audit, sha256 } from './audit.js';
 import { runValidation } from './validation.js';
 import type { LoanRecord } from './types.js';
@@ -47,39 +47,47 @@ export function normalize(raw: Record<string, unknown>, batchId: number, rowNumb
   };
 }
 
-export function ingestCsv(buffer: Buffer, filename: string, actorId = 1) {
+export async function ingestCsv(buffer: Buffer, filename: string, actorId = 1) {
   const rows = parse(buffer, { columns: true, skip_empty_lines: true, trim: true, relax_column_count: true }) as Array<Record<string, unknown>>;
   const now = new Date().toISOString();
-  const batchResult = db.prepare(`INSERT INTO batches
-    (filename,source_hash,uploaded_by,uploaded_at,total_rows,status) VALUES (?,?,?,?,?,'processing')`)
-    .run(filename, sha256(buffer), actorId, now, rows.length);
-  const batchId = Number(batchResult.lastInsertRowid);
-  audit({ batchId, actorId, eventType: 'FILE_UPLOADED', description: `${filename} uploaded with ${rows.length} source rows.`, metadata: { filename, sha256: sha256(buffer), size: buffer.length } });
+  const fileHash = sha256(buffer);
 
-  const columns = ['batch_id','row_number','loan_id','borrower_id','loan_type','origination_date','maturity_date','original_principal','current_balance','interest_rate','term_months','borrower_state','loan_purpose','credit_grade','employment_length','income_band','payment_status','days_past_due','servicer_name','last_payment_date','last_updated_at','document_status','source_system','raw_json'];
-  const placeholders = columns.map(() => '?').join(',');
-  const insert = db.prepare(`INSERT INTO loans (${columns.join(',')},created_at) VALUES (${placeholders},?)`);
+  const [batch] = await sql`
+    INSERT INTO batches (filename,source_hash,uploaded_by,uploaded_at,total_rows,status)
+    VALUES (${filename},${fileHash},${actorId},${now},${rows.length},'processing')
+    RETURNING id
+  `;
+  const batchId = Number(batch.id);
+  await audit({ batchId, actorId, eventType: 'FILE_UPLOADED', description: `${filename} uploaded with ${rows.length} source rows.`, metadata: { filename, sha256: fileHash, size: buffer.length } });
+
+  const columns = ['batch_id','row_number','loan_id','borrower_id','loan_type','origination_date','maturity_date','original_principal','current_balance','interest_rate','term_months','borrower_state','loan_purpose','credit_grade','employment_length','income_band','payment_status','days_past_due','servicer_name','last_payment_date','last_updated_at','document_status','source_system','raw_json'] as const;
+
   let imported = 0;
   let failed = 0;
   const loanIds: number[] = [];
-  const transaction = db.transaction(() => {
-    rows.forEach((raw, index) => {
-      try {
-        const loan = normalize(raw, batchId, index + 2);
-        const result = insert.run(...columns.map((column) => loan[column as keyof LoanRecord] ?? null), now);
-        const loanRowId = Number(result.lastInsertRowid);
-        loanIds.push(loanRowId);
-        imported++;
-        audit({ loanRowId, batchId, actorId, eventType: 'LOAN_IMPORTED', description: `Source row ${index + 2} normalized into the canonical schema.`, metadata: { sourceRow: index + 2, loanId: loan.loan_id } });
-      } catch { failed++; }
-    });
-  });
-  transaction();
-  for (const loanRowId of loanIds) {
-    const issues = runValidation(loanRowId);
-    audit({ loanRowId, batchId, actorId, eventType: 'VALIDATION_EXECUTED', description: issues.length ? `${issues.length} validation exceptions detected.` : 'Record passed all validation rules.', metadata: { issueCount: issues.length, rules: issues.map((value) => value.ruleCode) } });
-  }
-  db.prepare("UPDATE batches SET imported_rows=?, failed_rows=?, status='complete' WHERE id=?").run(imported, failed, batchId);
-  return { batchId, filename, totalRows: rows.length, importedRows: imported, failedRows: failed, exceptions: db.prepare(`SELECT COUNT(*) count FROM exceptions e JOIN loans l ON l.id=e.loan_row_id WHERE l.batch_id=?`).get(batchId) };
-}
 
+  for (const [index, raw] of rows.entries()) {
+    try {
+      const loan = normalize(raw, batchId, index + 2);
+      const vals = columns.map((c) => loan[c as keyof LoanRecord] ?? null);
+      const [inserted] = await sql`
+        INSERT INTO loans (${sql(columns as unknown as string[])}, created_at)
+        VALUES (${sql(vals)}, ${now})
+        RETURNING id
+      `;
+      const loanRowId = Number(inserted.id);
+      loanIds.push(loanRowId);
+      imported++;
+      await audit({ loanRowId, batchId, actorId, eventType: 'LOAN_IMPORTED', description: `Source row ${index + 2} normalized into the canonical schema.`, metadata: { sourceRow: index + 2, loanId: loan.loan_id } });
+    } catch { failed++; }
+  }
+
+  for (const loanRowId of loanIds) {
+    const issues = await runValidation(loanRowId);
+    await audit({ loanRowId, batchId, actorId, eventType: 'VALIDATION_EXECUTED', description: issues.length ? `${issues.length} validation exceptions detected.` : 'Record passed all validation rules.', metadata: { issueCount: issues.length, rules: issues.map((v) => v.ruleCode) } });
+  }
+
+  await sql`UPDATE batches SET imported_rows=${imported}, failed_rows=${failed}, status='complete' WHERE id=${batchId}`;
+  const [excCount] = await sql`SELECT COUNT(*) count FROM exceptions e JOIN loans l ON l.id=e.loan_row_id WHERE l.batch_id=${batchId}`;
+  return { batchId, filename, totalRows: rows.length, importedRows: imported, failedRows: failed, exceptions: excCount };
+}

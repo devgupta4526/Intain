@@ -1,4 +1,4 @@
-import { db } from './db.js';
+import { sql } from './db.js';
 import type { LoanRecord, Severity } from './types.js';
 
 export type ValidationIssue = {
@@ -51,35 +51,36 @@ export function validateLoan(loan: LoanRecord): ValidationIssue[] {
   return issues;
 }
 
-export function runValidation(loanRowId: number) {
-  const loan = db.prepare('SELECT * FROM loans WHERE id = ?').get(loanRowId) as LoanRecord | undefined;
+export async function runValidation(loanRowId: number) {
+  const rows = await sql<LoanRecord[]>`SELECT * FROM loans WHERE id = ${loanRowId}`;
+  const loan = rows[0];
   if (!loan) throw new Error('Loan not found');
   const issues = validateLoan(loan);
 
   if (loan.loan_id) {
-    const duplicate = db.prepare('SELECT id FROM loans WHERE loan_id = ? AND id != ? LIMIT 1').get(loan.loan_id, loanRowId) as { id: number } | undefined;
-    if (duplicate) issues.push(issue('DUPLICATE_LOAN_ID', 'critical', `Loan ID also appears on row ${duplicate.id}.`, 'loan_id', loan.loan_id));
+    const dup = await sql`SELECT id FROM loans WHERE loan_id = ${loan.loan_id} AND id != ${loanRowId} LIMIT 1`;
+    if (dup[0]) issues.push(issue('DUPLICATE_LOAN_ID', 'critical', `Loan ID also appears on row ${dup[0].id}.`, 'loan_id', loan.loan_id));
   }
   if (loan.borrower_id && loan.original_principal !== null && loan.origination_date) {
-    const repeat = db.prepare(`SELECT id FROM loans WHERE borrower_id = ? AND original_principal = ? AND origination_date = ? AND id != ? LIMIT 1`)
-      .get(loan.borrower_id, loan.original_principal, loan.origination_date, loanRowId) as { id: number } | undefined;
-    if (repeat) issues.push(issue('SUSPICIOUS_REPEAT', 'high', `Borrower, amount, and origination date match row ${repeat.id}.`, 'borrower_id', loan.borrower_id));
+    const repeat = await sql`SELECT id FROM loans WHERE borrower_id = ${loan.borrower_id} AND original_principal = ${loan.original_principal} AND origination_date = ${loan.origination_date} AND id != ${loanRowId} LIMIT 1`;
+    if (repeat[0]) issues.push(issue('SUSPICIOUS_REPEAT', 'high', `Borrower, amount, and origination date match row ${repeat[0].id}.`, 'borrower_id', loan.borrower_id));
   }
 
-  const insert = db.prepare(`INSERT INTO exceptions
-    (loan_row_id,rule_code,field_name,severity,message,current_value,suggested_value,status,created_at)
-    VALUES (?,?,?,?,?,?,?,'open',?)
-    ON CONFLICT(loan_row_id,rule_code) DO UPDATE SET
-      field_name=excluded.field_name,severity=excluded.severity,message=excluded.message,
-      current_value=excluded.current_value,suggested_value=excluded.suggested_value,
-      status='open',resolved_at=NULL`);
   const now = new Date().toISOString();
-  const transaction = db.transaction(() => {
-    db.prepare("UPDATE exceptions SET status='corrected',resolved_at=? WHERE loan_row_id=? AND status='open'").run(now, loanRowId);
-    for (const value of issues) insert.run(loanRowId, value.ruleCode, value.fieldName ?? null, value.severity,
-      value.message, value.currentValue == null ? null : String(value.currentValue), value.suggestedValue == null ? null : String(value.suggestedValue), now);
-    db.prepare('UPDATE loans SET validation_status = ? WHERE id = ?').run(issues.length ? 'invalid' : 'valid', loanRowId);
-  });
-  transaction();
+  // Close old open exceptions then upsert new ones
+  await sql`UPDATE exceptions SET status='corrected', resolved_at=${now} WHERE loan_row_id=${loanRowId} AND status='open'`;
+  for (const v of issues) {
+    await sql`
+      INSERT INTO exceptions (loan_row_id,rule_code,field_name,severity,message,current_value,suggested_value,status,created_at)
+      VALUES (${loanRowId},${v.ruleCode},${v.fieldName ?? null},${v.severity},${v.message},
+        ${v.currentValue == null ? null : String(v.currentValue)},
+        ${v.suggestedValue == null ? null : String(v.suggestedValue)},'open',${now})
+      ON CONFLICT (loan_row_id,rule_code) DO UPDATE SET
+        field_name=EXCLUDED.field_name, severity=EXCLUDED.severity, message=EXCLUDED.message,
+        current_value=EXCLUDED.current_value, suggested_value=EXCLUDED.suggested_value,
+        status='open', resolved_at=NULL
+    `;
+  }
+  await sql`UPDATE loans SET validation_status=${issues.length ? 'invalid' : 'valid'} WHERE id=${loanRowId}`;
   return issues;
 }
