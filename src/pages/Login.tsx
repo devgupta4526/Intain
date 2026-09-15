@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ShieldCheck, ArrowRight, UploadCloud, Sparkles, FileCheck2, CheckCircle2 } from 'lucide-react';
 import { api } from '../api';
 import { saveSession } from '../session';
-import type { User } from '../types';
+import type { User, Role } from '../types';
 
 const PERSONAS: Record<string, { icon: typeof UploadCloud; color: string; bg: string; border: string; tag: string; desc: string }> = {
   operator: {
