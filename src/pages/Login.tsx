@@ -37,6 +37,9 @@ export function Login({ onLogin }: { onLogin: (user: User) => void }) {
   const [signingIn, setSigningIn] = useState<number | null>(null);
   
   // Traditional form state
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [name, setName] = useState('');
+  const [role, setRole] = useState<Role>('operator');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -58,21 +61,46 @@ export function Login({ onLogin }: { onLogin: (user: User) => void }) {
   async function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
-    
-    // Find user by email
-    const user = users.find(u => u.email === email);
-    if (!user) {
-      setError('Invalid email or password');
-      return;
-    }
-    
-    // Demo password check (accepting anything for the demo, or hardcoded 'demo123')
+
     if (password.length < 3) {
-      setError('Invalid email or password');
+      setError('Password must be at least 3 characters');
       return;
     }
-    
-    await handleSignIn(user);
+
+    if (isSignUp) {
+      if (!name.trim()) return setError('Name is required');
+      setSigningIn(-1); // Temp loading state
+      try {
+        const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() || 'U';
+        const res = await fetch('/api/users', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, role, initials })
+        });
+        
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to sign up');
+        }
+        
+        const newUser: User = await res.json();
+        // Update local state just in case
+        setUsers(prev => [...prev, newUser]);
+        await handleSignIn(newUser);
+      } catch (err: any) {
+        setSigningIn(null);
+        setError(err.message);
+      }
+    } else {
+      // Find user by email
+      const user = users.find(u => u.email === email);
+      if (!user) {
+        setError('Invalid email or password');
+        return;
+      }
+      
+      await handleSignIn(user);
+    }
   }
 
   return (
@@ -121,6 +149,34 @@ export function Login({ onLogin }: { onLogin: (user: User) => void }) {
             </div>
             
             <form onSubmit={handleFormSubmit} className="traditional-login-form">
+              {isSignUp && (
+                <>
+                  <div className="form-group">
+                    <label htmlFor="name">Full name</label>
+                    <input 
+                      type="text" 
+                      id="name" 
+                      placeholder="Jane Doe"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="role">Role</label>
+                    <select 
+                      id="role" 
+                      className="form-select"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value as Role)}
+                    >
+                      <option value="operator">Data Operator</option>
+                      <option value="reviewer">Reviewer</option>
+                      <option value="consumer">Data Consumer</option>
+                    </select>
+                  </div>
+                </>
+              )}
               <div className="form-group">
                 <label htmlFor="email">Email address</label>
                 <input 
@@ -145,8 +201,15 @@ export function Login({ onLogin }: { onLogin: (user: User) => void }) {
               </div>
               {error && <div className="form-error-banner">{error}</div>}
               <button type="submit" className="button primary full-width" disabled={signingIn !== null}>
-                Sign in securely
+                {isSignUp ? 'Create account' : 'Sign in securely'}
               </button>
+              
+              <div className="auth-toggle">
+                {isSignUp ? 'Already have an account? ' : 'Don\'t have an account? '}
+                <button type="button" onClick={() => { setIsSignUp(!isSignUp); setError(''); }}>
+                  {isSignUp ? 'Sign in' : 'Sign up'}
+                </button>
+              </div>
             </form>
           </div>
 

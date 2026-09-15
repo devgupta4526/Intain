@@ -33,6 +33,17 @@ export function createApp(options: { seed?: boolean } = {}) {
 
   app.get('/api/health', (_req, res) => res.json({ status: 'ok', service: 'Veritas Loan Copilot', time: new Date().toISOString() }));
   app.get('/api/users', (_req, res) => res.json(db.prepare('SELECT id,name,email,role,initials FROM users ORDER BY id').all()));
+  app.post('/api/users', (req, res) => {
+    const { name, email, role, initials } = req.body;
+    if (!name || !email || !role || !initials) return res.status(400).json({ error: 'Missing required fields' });
+    try {
+      const result = db.prepare('INSERT INTO users (name,email,role,initials) VALUES (?,?,?,?)').run(name, email, role, initials);
+      res.json({ id: Number(result.lastInsertRowid), name, email, role, initials });
+    } catch (err: any) {
+      if (err.message.includes('UNIQUE')) return res.status(409).json({ error: 'Email already exists' });
+      res.status(500).json({ error: 'Failed to create user' });
+    }
+  });
 
   app.get('/api/summary', (_req, res) => {
     const totals = db.prepare(`SELECT COUNT(*) total,
