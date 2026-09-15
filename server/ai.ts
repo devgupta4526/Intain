@@ -30,7 +30,7 @@ Return a JSON object strictly matching this schema:
   "suggested_patch": <optional JSON object with the field name and suggested value to fix the issue, or null>
 }`;
 
-  const model = process.env.GEMINI_MODEL ?? 'gemini-2.5-flash';
+  const model = process.env.GEMINI_MODEL ?? 'gemini-3.6-flash';
   let explanation = `${row.message} The normalized value (${row.current_value ?? 'missing'}) conflicts with the configured ${row.rule_code} control. This is a data-quality finding, not an underwriting judgment.`;
   let recommendation = 'Compare the source row with authoritative servicing evidence and request correction if the discrepancy cannot be resolved.';
   let confidence = 0.78;
@@ -47,7 +47,10 @@ Return a JSON object strictly matching this schema:
     });
 
     const result = await generativeModel.generateContent(prompt);
-    const text = result.response.text();
+    let text = result.response.text();
+    if (text.startsWith('```')) {
+      text = text.replace(/^```(json)?\n/, '').replace(/\n```$/, '');
+    }
     const parsed = JSON.parse(text);
 
     if (parsed.explanation) explanation = parsed.explanation;
